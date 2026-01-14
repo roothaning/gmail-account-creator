@@ -184,7 +184,7 @@ pip install -r requirements.txt
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/Gmail2025.git
+git clone https://github.com/ShadowHackrs/gmail-account-creator.git
 cd Gmail2025
 ```
 
@@ -220,6 +220,7 @@ Ahmed Mohamed
 Mohamed Ali
 Omar Ibrahim
 Sarah Ahmed
+Shadow Hacker
 ...
 ```
 
@@ -660,7 +661,7 @@ For detailed error messages:
 ### Getting Help
 
 If you encounter issues not listed here:
-1. Check the [GitHub Issues](https://github.com/yourusername/Gmail2025/issues)
+1. Check the [GitHub Issues](https://github.com/ShadowHackrs/gmail-account-creator/issues)
 2. Contact support (see [Contact & Support](#-contact--support))
 3. Review the error messages carefully
 4. Check internet connection and Chrome browser version
