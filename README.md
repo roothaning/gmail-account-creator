@@ -15,7 +15,7 @@
 
 ---
 
-![Gmail Creator Pro Interface](screenshot.png)
+![Gmail Creator Pro Interface](gmail.png)
 
 *Screenshot of Gmail Creator Pro v2.0.0 in action*
 
