@@ -131,7 +131,7 @@
 
 <div align="center">
 
-![Main Interface](screenshot.png)
+![Main Interface](gmail2.png)
 
 *Gmail Creator Pro v2.0.0 - Main Interface*
 
