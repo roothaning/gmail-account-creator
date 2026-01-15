@@ -151,7 +151,9 @@
 
 ### 🎥 YouTube Video Demo
 
-[![Gmail Creator Pro - The Ultimate Gmail Account Creator](https://img.youtube.com/vi/2TucpXay1Sk/maxresdefault.jpg)](https://www.youtube.com/watch?v=2TucpXay1Sk)
+[![Watch the video](https://img.youtube.com/vi/2TucpXay1Sk/maxresdefault.jpg)](https://youtu.be/2TucpXay1Sk)
+
+### [Watch this video on YouTube](https://youtu.be/2TucpXay1Sk)
 
 </div>
 
