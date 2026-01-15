@@ -145,7 +145,23 @@
 - **Statistics Dashboard** - Detailed account creation statistics
 
 ---
+## 📚 Full Explanation
 
+<div align="center">
+
+### 🎥 YouTube Video Demo
+
+[![Gmail Creator Pro - The Ultimate Gmail Account Creator](https://img.youtube.com/vi/2TucpXay1Sk/maxresdefault.jpg)](https://www.youtube.com/watch?v=2TucpXay1Sk)
+
+</div>
+
+---
+
+### 📝 In-Depth Technical Article
+
+📖 Read the full step-by-step guide and detailed explanation here:  
+👉 https://www.shadowhackr.com/2026/01/gmail-creator-pro.html
+---
 ## 📋 Requirements
 
 ### System Requirements
