@@ -10,6 +10,7 @@ Educational purposes only. Use responsibly.
 import json
 import os
 import random
+import secrets
 import string
 import sys
 import time
@@ -67,12 +68,23 @@ def load_config():
     }
     config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config", "config.py")
     if os.path.exists(config_path):
-        cfg_globals = {}
+        import ast
         with open(config_path, "r", encoding="utf-8") as f:
-            exec(f.read(), cfg_globals)  # noqa: S102
-        for key in config:
-            if key in cfg_globals:
-                config[key] = cfg_globals[key]
+            for line in f:
+                line = line.strip()
+                # Skip comments and blank lines
+                if not line or line.startswith("#"):
+                    continue
+                if "=" in line:
+                    key, _, value = line.partition("=")
+                    key = key.strip()
+                    # Strip inline comments
+                    value = value.split("#")[0].strip()
+                    if key in config:
+                        try:
+                            config[key] = ast.literal_eval(value)
+                        except (ValueError, SyntaxError):
+                            config[key] = value.strip('"').strip("'")
     return config
 
 
@@ -133,7 +145,7 @@ def load_user_agents(config):
                     agents.append(line)
     if not agents:
         agents = [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         ]
     return agents
 
@@ -291,7 +303,7 @@ def generate_username(first_name, last_name):
     """Generate a Gmail-compatible username from a name."""
     first = unidecode(first_name).lower().replace(" ", "")
     last = unidecode(last_name).lower().replace(" ", "")
-    rand_digits = "".join(random.choices(string.digits, k=random.randint(3, 6)))
+    rand_digits = "".join(secrets.choice(string.digits) for _ in range(secrets.randbelow(4) + 3))
     patterns = [
         f"{first}.{last}{rand_digits}",
         f"{first}{last}{rand_digits}",
@@ -299,7 +311,7 @@ def generate_username(first_name, last_name):
         f"{last}.{first}{rand_digits}",
         f"{first}{rand_digits}",
     ]
-    username = random.choice(patterns)
+    username = secrets.choice(patterns)
     # Keep only alphanumeric, dots, underscores
     username = "".join(c for c in username if c.isalnum() or c in "._")
     return username
