@@ -338,12 +338,17 @@ def _click_next_button(driver, wait):
 
 def _select_dropdown_value(driver, wait, element_id, value):
     """Select a value from a dropdown, handling both native <select> and custom dropdowns."""
+    # Sanitise value to prevent selector injection (expected: simple digits)
+    safe_value = str(value).strip()
+    if not safe_value.isalnum():
+        raise ValueError(f"Invalid dropdown value: {safe_value!r}")
+
     el = wait.until(EC.presence_of_element_located((By.ID, element_id)))
 
     # Strategy 1: Use Select class for native <select> elements
     if el.tag_name.lower() == "select":
         try:
-            Select(el).select_by_value(str(value))
+            Select(el).select_by_value(safe_value)
             return
         except NoSuchElementException:
             pass
@@ -353,9 +358,8 @@ def _select_dropdown_value(driver, wait, element_id, value):
     random_delay(0.5, 1.0)
 
     option_selectors = [
-        (By.CSS_SELECTOR, f"#{element_id} option[value='{value}']"),
-        (By.CSS_SELECTOR, f"#{element_id} [data-value='{value}']"),
-        (By.XPATH, f"//ul[@role='listbox']//li[@data-value='{value}']"),
+        (By.CSS_SELECTOR, f"#{element_id} [data-value='{safe_value}']"),
+        (By.XPATH, f"//ul[@role='listbox']//li[@data-value='{safe_value}']"),
     ]
     for by, sel in option_selectors:
         try:
@@ -366,7 +370,7 @@ def _select_dropdown_value(driver, wait, element_id, value):
             continue
 
     raise NoSuchElementException(
-        f"Could not select value '{value}' from dropdown '#{element_id}'"
+        f"Could not select value '{safe_value}' from dropdown '#{element_id}'"
     )
 
 
