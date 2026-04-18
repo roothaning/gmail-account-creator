@@ -33,7 +33,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 from unidecode import unidecode
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -336,6 +336,44 @@ def _click_next_button(driver, wait):
     return False
 
 
+def _select_dropdown_value(driver, wait, element_id, value):
+    """Select a value from a dropdown, handling both native <select> and custom dropdowns."""
+    # Sanitise value to prevent selector injection (expected: simple digits)
+    safe_value = str(value).strip()
+    if not safe_value.isalnum():
+        raise ValueError(f"Invalid dropdown value: {safe_value!r}")
+
+    el = wait.until(EC.presence_of_element_located((By.ID, element_id)))
+
+    # Strategy 1: Use Select class for native <select> elements
+    if el.tag_name.lower() == "select":
+        try:
+            Select(el).select_by_value(safe_value)
+            return
+        except NoSuchElementException:
+            pass
+
+    # Strategy 2: Click the element, then wait for option to become clickable
+    el.click()
+    random_delay(0.5, 1.0)
+
+    option_selectors = [
+        (By.CSS_SELECTOR, f"#{element_id} [data-value='{safe_value}']"),
+        (By.XPATH, f"//ul[@role='listbox']//li[@data-value='{safe_value}']"),
+    ]
+    for by, sel in option_selectors:
+        try:
+            opt = wait.until(EC.element_to_be_clickable((by, sel)))
+            opt.click()
+            return
+        except (NoSuchElementException, TimeoutException):
+            continue
+
+    raise NoSuchElementException(
+        f"Could not select value '{safe_value}' from dropdown '#{element_id}'"
+    )
+
+
 def try_skip_phone_verification(driver, wait):
     """Attempt to skip or bypass phone verification using multiple strategies."""
     skip_selectors = [
@@ -499,28 +537,20 @@ def create_gmail_account(config, user_agents, names, fivesim=None):
         # ── Step 2: Birthday & gender ─────────────────────────────────────
         console.print("[yellow]  ⏳ Entering birthday and gender...[/yellow]")
         try:
-            month_select = wait.until(EC.presence_of_element_located((By.ID, "month")))
-            month_select.click()
-            random_delay(0.3, 0.5)
-            month_option = driver.find_element(By.CSS_SELECTOR, f"#month option[value='{birth_month}']")
-            month_option.click()
+            _select_dropdown_value(driver, wait, "month", birth_month)
             random_delay()
 
-            day_input = driver.find_element(By.ID, "day")
+            day_input = wait.until(EC.presence_of_element_located((By.ID, "day")))
             day_input.clear()
             human_type(day_input, birth_day)
             random_delay()
 
-            year_input = driver.find_element(By.ID, "year")
+            year_input = wait.until(EC.presence_of_element_located((By.ID, "year")))
             year_input.clear()
             human_type(year_input, birth_year)
             random_delay()
 
-            gender_select = driver.find_element(By.ID, "gender")
-            gender_select.click()
-            random_delay(0.3, 0.5)
-            gender_option = driver.find_element(By.CSS_SELECTOR, f"#gender option[value='{gender}']")
-            gender_option.click()
+            _select_dropdown_value(driver, wait, "gender", gender)
             random_delay()
 
             _click_next_button(driver, wait)
